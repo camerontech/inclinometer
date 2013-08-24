@@ -4,7 +4,7 @@ Arduino Inclinometer
 This sketch uses an accelerometer and serial-enabled 16x2 LCD screen to measure
 pitch and roll of a vehicle, usually for offroading.
 
-![photo](http://cannikin.github.io/arduino_inclinometer/photo.jpg)
+![photo](http://cannikin.github.io/arduino_inclinometer/photo.jpg?1)
 
 Equipment
 ---------
