@@ -6,9 +6,9 @@ pitch and roll of a vehicle, usually for offroading.
 
 Equipment
 ---------
-1 x Ardunio or compatible board
-1 x SerLCD from Sparkfun https://www.sparkfun.com/products/9395
-1 x ADXL335 triple axis accelerometer https://www.sparkfun.com/products/9269
+* 1 x Ardunio or compatible board
+* 1 x SerLCD from Sparkfun https://www.sparkfun.com/products/9395
+* 1 x ADXL335 triple axis accelerometer https://www.sparkfun.com/products/9269
 
 Wiring
 ------
