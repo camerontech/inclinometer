@@ -5,11 +5,11 @@ This sketch uses an accelerometer and serial-enabled 16x2 LCD screen to measure
 and display pitch and roll of a vehicle. An inclinometer is usually use in
 offroading to determine how close you are to having a very bad day.
 
-![photo](http://farm8.staticflickr.com/7330/9578822489_0db79b4148_o.jpg)
+![photo](https://farm8.staticflickr.com/7330/9578822489_0db79b4148_o.jpg)
 
 Here's what it looks like prototyped:
 
-![photo](http://cannikin.github.io/arduino_inclinometer/photo.jpg?1)
+![photo](https://cannikin.github.io/arduino_inclinometer/photo.jpg?1)
 
 And a quick video in action: http://www.youtube.com/watch?v=Q_Gq_8f8r2c
 
