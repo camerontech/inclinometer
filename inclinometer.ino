@@ -8,8 +8,10 @@ const int ZIN = 2;
 
 const int XMIN = 262;
 const int XMAX = 398;
+const int XMID = XMIN + (XMAX - XMIN) / 2;
 const int YMIN = 265;
 const int YMAX = 403;
+const int YMID = YMIN + (YMAX - YMIN) / 2;
 
 const int FLAT = 0;
 const int LEFT = 1;
@@ -20,11 +22,14 @@ const int BACK = 4;
 const char* ORIENTATIONS[] = {"FLAT","LEFT","RIGHT","FORWARD","BACK"};
 int orientation;
 int x, y, z;
+int xTare, yTare;
 int xCalibrated, yCalibrated;
 String xString, yString, output;
 int outputLength = 0;
 
 void setup() {
+  pinMode(7, INPUT);
+
   orientation = getOrientation();
 
   Serial.begin(9600);
@@ -42,6 +47,10 @@ void setup() {
 void loop() {
   moveToSecondLine();
 
+  if (digitalRead(7) == HIGH) {
+    tare();
+  }
+
   x = analogRead(XIN);
   y = analogRead(YIN);
 
@@ -52,8 +61,10 @@ void loop() {
   Serial.print("orientation: ");
   Serial.println(ORIENTATIONS[orientation]);
 
-  xCalibrated = map(x, XMIN, XMAX, -90, 90);
-  yCalibrated = map(y, YMIN, YMAX, -90, 90);
+  int xTared = x - xTare;
+  int yTared = y - yTare;
+  xCalibrated = map(xTared, XMIN, XMAX, -90, 90);
+  yCalibrated = map(yTared, YMIN, YMAX, -90, 90);
 
   xString = String(xCalibrated);
   yString = String(yCalibrated);
@@ -66,14 +77,12 @@ void loop() {
 
 int getOrientation() {
   int offset = 25;
-  int xMid = (XMAX - XMIN) / 2 + XMIN;
-  int yMid = (YMAX - YMIN) / 2 + YMIN;
 
   int x = analogRead(XIN);
   int y = analogRead(YIN);
 
-  if (x > xMid-offset && x < xMid+offset) {
-    if (y > yMid-offset && y < yMid+offset) {
+  if (x > XMID-offset && x < XMID+offset) {
+    if (y > YMID-offset && y < YMID+offset) {
       return FLAT;
     } else if (y > YMIN-offset && y < YMIN+offset) {
       return LEFT;
@@ -85,6 +94,14 @@ int getOrientation() {
   } else {
     return BACK;
   }
+}
+
+void tare() {
+  int x = analogRead(XIN);
+  int y = analogRead(YIN);
+
+  xTare = x - XMID;
+  yTare = y - YMID;
 }
 
 void clearDisplay() {
