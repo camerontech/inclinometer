@@ -13,6 +13,25 @@ Here's what it looks like prototyped:
 
 And a quick video in action: http://www.youtube.com/watch?v=Q_Gq_8f8r2c
 
+Features
+--------
+
+The inclinometer reads the X and Y values from the accelerometer and translates
+them into PITCH (forward and back tilt) and ROLL (left and right tilt).
+However, since we're only measuring acceleration we will get false readings when
+the sensor itself is in motion (like when you're driving in a car). To get a
+"true" reading of your pitch and roll you'll need to stop moving.
+
+The sensor's idea of 0° on the X and Y axes is set from the factory and your
+initial readings may be a bit off from that if the sensor is not mounted
+perfectly level (according to the sensor) in both axes. To compensate for this a
+primitive "tare" has been added (press the button for a second) that takes the
+current values and tells the system to treat them as 0° instead of the factory
+defaults. This isn't ideal and effort should be taken to mount the sensor as
+close to 0° as possible. If mounted in your car, stop the vehicle on what feels
+like the flattest orientation possible and then tweak the sensor mount until you
+read 0° for both measurements.
+
 Equipment
 ---------
 * 1 x Arduino or compatible board https://www.sparkfun.com/products/11021
