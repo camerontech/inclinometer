@@ -31,4 +31,4 @@ Connect the accelerometer to 3.3V, GND, X to analog pin 0 and Y to analog pin 1.
 Connect 5V to one leg of the push button. Connect the other leg to a 10K
 pull-down resistor to ground and to digital pin 7.
 
-![layout](https://cannikin.github.com/arduino_inclinometer/inclinometer-layout.png)
+![layout](https://cannikin.github.com/arduino_inclinometer/inclinometer-layout.png?1)
