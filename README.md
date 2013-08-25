@@ -9,7 +9,7 @@ offroading to determine how close you are to having a very bad day.
 
 Here's what it looks like prototyped:
 
-![photo](https://cannikin.github.io/arduino_inclinometer/photo.jpg?1)
+![photo](http://cannikin.github.com/arduino_inclinometer/photo.jpg?1)
 
 And a quick video in action: http://www.youtube.com/watch?v=Q_Gq_8f8r2c
 
@@ -50,7 +50,7 @@ Connect the accelerometer to 3.3V, GND, X to analog pin 0 and Y to analog pin 1.
 Connect 5V to one leg of the push button. Connect the other leg to a 10K
 pull-down resistor to ground and to digital pin 7.
 
-![layout](https://cannikin.github.io/arduino_inclinometer/inclinometer-layout.png?2)
+![layout](http://cannikin.github.com/arduino_inclinometer/inclinometer-layout.png?2)
 
 The LCD screen in the diagram is a parallel one, but I'm wiring it as if it
 was a Sparkfun SerLCD: 5V, GND and RX are the only pins needed.
