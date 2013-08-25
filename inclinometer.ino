@@ -2,10 +2,11 @@
 
 SoftwareSerial mySerial(3,2);
 
+// analog input pins
 const int XIN = 0;
 const int YIN = 1;
-const int ZIN = 2;
 
+// max/min analog values
 const int XMIN = 262;
 const int XMAX = 398;
 const int XMID = XMIN + (XMAX - XMIN) / 2;
@@ -13,24 +14,15 @@ const int YMIN = 265;
 const int YMAX = 403;
 const int YMID = YMIN + (YMAX - YMIN) / 2;
 
-const int FLAT = 0;
-const int LEFT = 1;
-const int RIGHT = 2;
-const int FORWARD = 3;
-const int BACK = 4;
+// ASCII character for degree symbol
+const int DEGREE = 223;
 
-const char* ORIENTATIONS[] = {"FLAT","LEFT","RIGHT","FORWARD","BACK"};
-int orientation;
-int x, y, z;
-int xTare, yTare;
-int xCalibrated, yCalibrated;
-String xString, yString, output;
-int outputLength = 0;
+// tare values that we want to save between loops
+int xTare = 0;
+int yTare = 0;
 
 void setup() {
   pinMode(7, INPUT);
-
-  orientation = getOrientation();
 
   Serial.begin(9600);
   mySerial.begin(9600);
@@ -47,53 +39,26 @@ void setup() {
 void loop() {
   moveToSecondLine();
 
+  // if the button is pressed, tare the current values
   if (digitalRead(7) == HIGH) {
     tare();
   }
 
-  x = analogRead(XIN);
-  y = analogRead(YIN);
+  int x = analogRead(XIN);
+  int y = analogRead(YIN);
 
   Serial.print("x:");
   Serial.print(x, DEC);
   Serial.print(" y:");
   Serial.println(y, DEC);
-  Serial.print("orientation: ");
-  Serial.println(ORIENTATIONS[orientation]);
 
-  int xTared = x - xTare;
-  int yTared = y - yTare;
-  xCalibrated = map(xTared, XMIN, XMAX, -90, 90);
-  yCalibrated = map(yTared, YMIN, YMAX, -90, 90);
+  int xCalibrated = map(x-xTare, XMIN, XMAX, -90, 90);
+  int yCalibrated = map(y-yTare, YMIN, YMAX, -90, 90);
 
-  xString = String(xCalibrated);
-  yString = String(yCalibrated);
-
-  updateDisplay();
+  updateDisplay(xCalibrated, yCalibrated);
 
   // Wait a quarter second so the numbers aren't flashing so fast
   delay(250);
-}
-
-int getOrientation() {
-  int offset = 25;
-
-  int x = analogRead(XIN);
-  int y = analogRead(YIN);
-
-  if (x > XMID-offset && x < XMID+offset) {
-    if (y > YMID-offset && y < YMID+offset) {
-      return FLAT;
-    } else if (y > YMIN-offset && y < YMIN+offset) {
-      return LEFT;
-    } else {
-      return RIGHT;
-    }
-  } else if (x > XMIN-offset && x < XMIN+offset) {
-    return FORWARD;
-  } else {
-    return BACK;
-  }
 }
 
 void tare() {
@@ -121,9 +86,12 @@ void moveToSecondLine() {
   mySerial.write(192);
 }
 
-void updateDisplay() {
+void updateDisplay(int x, int y) {
+  String xString = String(x);
+  String yString = String(y);
+
   // Pad for X value
-  output = "   ";
+  String output = "   ";
   if (xString.length() == 1) {
     output += " ";
   }
@@ -131,9 +99,9 @@ void updateDisplay() {
 
   // Write X value and degree sign
   mySerial.print(output);
-  mySerial.write(223);
+  mySerial.write(DEGREE);
 
-  outputLength = output.length() + 1;
+  int outputLength = output.length() + 1;
 
   // Pad for Y value
   output = "";
@@ -147,11 +115,11 @@ void updateDisplay() {
 
   // Write Y value and degree sign
   mySerial.print(output);
-  mySerial.write(223);
+  mySerial.write(DEGREE);
 
   outputLength += output.length() + 1;
 
-  // Pad the rest of the line with blanks
+  // Fill the rest of the line with blanks
   for (int i=outputLength; i<16; i++) {
     mySerial.print(" ");
   }
