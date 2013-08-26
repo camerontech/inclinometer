@@ -3,8 +3,9 @@
 SoftwareSerial mySerial(3,2);
 
 // analog input pins
-const int XIN = 0;
-const int YIN = 1;
+const int X_IN = 0;
+const int Y_IN = 1;
+const int TARE_IN = 7;
 
 // max/min analog values
 const int XMIN = 262;
@@ -22,7 +23,10 @@ int xTare = 0;
 int yTare = 0;
 
 void setup() {
-  pinMode(7, INPUT);
+  // Setup tare pin as an input
+  pinMode(TARE_IN, INPUT);
+  // Enable internal pull-up resistor
+  digitalWrite(TARE_IN, HIGH);
 
   Serial.begin(9600);
   mySerial.begin(9600);
@@ -40,12 +44,12 @@ void loop() {
   moveToSecondLine();
 
   // if the button is pressed, tare the current values
-  if (digitalRead(7) == HIGH) {
+  if (digitalRead(TARE_IN) == LOW) {
     tare();
   }
 
-  int x = analogRead(XIN);
-  int y = analogRead(YIN);
+  int x = analogRead(X_IN);
+  int y = analogRead(Y_IN);
 
   Serial.print("x:");
   Serial.print(x, DEC);
@@ -62,8 +66,8 @@ void loop() {
 }
 
 void tare() {
-  int x = analogRead(XIN);
-  int y = analogRead(YIN);
+  int x = analogRead(X_IN);
+  int y = analogRead(Y_IN);
 
   xTare = x - XMID;
   yTare = y - YMID;
