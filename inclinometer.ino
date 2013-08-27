@@ -1,3 +1,6 @@
+// Thanks to http://bildr.org/2011/04/sensing-orientation-with-the-adxl335-arduino
+// for finding the correct formula for converting the ADXL335 voltage to angles.
+
 #include <SoftwareSerial.h>
 
 SoftwareSerial mySerial(3,2);
@@ -5,15 +8,24 @@ SoftwareSerial mySerial(3,2);
 // analog input pins
 const int X_IN = 0;
 const int Y_IN = 1;
+const int Z_IN = 2;
 const int TARE_IN = 7;
 
 // max/min analog values
-const int XMIN = 403;
-const int XMAX = 613;
-const int XMID = XMIN + (XMAX - XMIN) / 2;
-const int YMIN = 408;
-const int YMAX = 618;
-const int YMID = YMIN + (YMAX - YMIN) / 2;
+const int XMIN = 404;
+const int XMAX = 609;
+const int YMIN = 406;
+const int YMAX = 619;
+const int ZMIN = 407;
+const int ZMAX = 624;
+
+int xmax = 000;
+int xmin = 999;
+int ymax = 000;
+int ymin = 999;
+int zmax = 000;
+int zmin = 999;
+
 
 // ASCII character for degree symbol
 const int DEGREE = 223;
@@ -21,11 +33,7 @@ const int DEGREE = 223;
 // tare values that we want to save between loops
 int xTare = 0;
 int yTare = 0;
-
-int xMax = 0;
-int xMin = 999;
-int yMax = 0;
-int yMin = 999;
+int zTare = 0;
 
 void setup() {
   // Setup tare pin as an input
@@ -54,40 +62,37 @@ void loop() {
     tare();
   }
 
+  // sample the voltages
   int x = analogRead(X_IN);
   int y = analogRead(Y_IN);
+  int z = analogRead(Z_IN);
 
-  if (x > xMax) {
-    xMax = x;
+  figureMaxMin(x, y, z);
+
+  // convert to range of -90 to +90 degrees
+  int xAng = map(x, XMIN, XMAX, -90, 90);
+  int yAng = map(y, YMIN, YMAX, -90, 90);
+  int zAng = map(z, ZMIN, ZMAX, -90, 90);
+
+  // do some math to convert radians to degrees
+  int pitch = RAD_TO_DEG * (atan2(-xAng, -zAng) + PI);
+  int roll = RAD_TO_DEG * (atan2(-yAng, -zAng) + PI);
+
+  if (pitch > 180) {
+    pitch = pitch - 360;
   }
-  if (x < xMin) {
-    xMin = x;
-  }
-  if (y > yMax) {
-    yMax = y;
-  }
-  if (y < yMin) {
-    yMin = y;
+  if (roll > 180) {
+    roll = roll - 360;
   }
 
   Serial.print("x:");
   Serial.print(x, DEC);
   Serial.print(" y:");
-  Serial.println(y, DEC);
+  Serial.print(y, DEC);
+  Serial.print(" z:");
+  Serial.println(z, DEC);
 
-  Serial.print("xmax:");
-  Serial.print(xMax, DEC);
-  Serial.print(" xmin:");
-  Serial.print(xMin, DEC);
-  Serial.print(" ymax:");
-  Serial.print(yMax, DEC);
-  Serial.print(" ymin:");
-  Serial.println(yMin, DEC);
-
-  int xCalibrated = map(x-xTare, XMIN, XMAX, -90, 90);
-  int yCalibrated = map(y-yTare, YMIN, YMAX, -90, 90);
-
-  updateDisplay(xCalibrated, yCalibrated);
+  updateDisplay(pitch, roll);
 
   // Wait a quarter second so the numbers aren't flashing so fast
   delay(250);
@@ -96,9 +101,11 @@ void loop() {
 void tare() {
   int x = analogRead(X_IN);
   int y = analogRead(Y_IN);
+  int z = analogRead(Z_IN);
 
-  xTare = x - XMID;
-  yTare = y - YMID;
+  xTare = x - (XMAX - XMIN) / 2 + XMIN;
+  yTare = y - (YMAX - YMIN) / 2 + YMIN;
+  zTare = z - (ZMAX - ZMIN) / 2 + ZMIN;
 }
 
 void clearDisplay() {
@@ -118,16 +125,16 @@ void moveToSecondLine() {
   mySerial.write(192);
 }
 
-void updateDisplay(int x, int y) {
-  String xString = String(x);
-  String yString = String(y);
+void updateDisplay(int pitch, int roll) {
+  String pitchString = String(pitch);
+  String rollString = String(roll);
 
   // Pad for X value
   String output = "   ";
-  if (xString.length() == 1) {
+  if (pitchString.length() == 1) {
     output += " ";
   }
-  output += xString;
+  output += pitchString;
 
   // Write X value and degree sign
   mySerial.print(output);
@@ -140,10 +147,10 @@ void updateDisplay(int x, int y) {
   for (int i=outputLength; i<10; i++) {
     output += " ";
   }
-  if (yString.length() == 1) {
+  if (rollString.length() == 1) {
     output += " ";
   }
-  output += yString;
+  output += rollString;
 
   // Write Y value and degree sign
   mySerial.print(output);
@@ -155,4 +162,38 @@ void updateDisplay(int x, int y) {
   for (int i=outputLength; i<16; i++) {
     mySerial.print(" ");
   }
+}
+
+void figureMaxMin(int x, int y, int z) {
+  if (x < xmin) {
+    xmin = x;
+  }
+  if (x > xmax) {
+    xmax = x;
+  }
+  if (y < ymin) {
+    ymin = y;
+  }
+  if (y > ymax) {
+    ymax = y;
+  }
+  if (z < zmin) {
+    zmin = z;
+  }
+  if (z > zmax) {
+    zmax = z;
+  }
+
+  Serial.print("xmax:");
+  Serial.print(xmax, DEC);
+  Serial.print(" xmin:");
+  Serial.print(xmin, DEC);
+  Serial.print(" ymax:");
+  Serial.print(ymax, DEC);
+  Serial.print(" ymin:");
+  Serial.print(ymin, DEC);
+  Serial.print(" zmax:");
+  Serial.print(zmax, DEC);
+  Serial.print(" zmin:");
+  Serial.println(zmin, DEC);
 }
