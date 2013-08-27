@@ -54,7 +54,7 @@ pull-down resistor to ground and to digital pin 7.
 Connect the 3.3V output to AREF. This sets the maximum voltage to be expected
 when doing an analogRead. In our case that makes 3.3V = 1024.
 
-![layout](http://cannikin.github.com/arduino_inclinometer/inclinometer-layout.png?4)
+![layout](http://cannikin.github.com/arduino_inclinometer/inclinometer-layout.png?5)
 
 The LCD screen in the diagram is a parallel one, but I'm wiring it as if it
 was a Sparkfun SerLCD: 5V, GND and RX are the only pins needed.
