@@ -1,9 +1,9 @@
 // Thanks to http://bildr.org/2011/04/sensing-orientation-with-the-adxl335-arduino
 // for finding the correct formula for converting the ADXL335 voltage to angles.
 
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 
-SoftwareSerial mySerial(3,2);
+//SoftwareSerial Serial1(3,2);
 
 // analog input pins
 const int X_PIN = 0;
@@ -18,10 +18,11 @@ const int MAX = 615;
 const int DEGREE = 223;
 
 void setup() {
-  // startup the serial ports
-  Serial.begin(9600);
-  mySerial.begin(9600);
+  // set analogRead max to 3.3v instead of default 5v
   analogReference(EXTERNAL);
+
+  // startup the serial ports
+  Serial1.begin(9600);
 
   // wait for splash screen
   delay(500);
@@ -30,7 +31,7 @@ void setup() {
   clearDisplay();
 
   // write header
-  mySerial.write("  PITCH   ROLL ");
+  Serial1.write("  PITCH   ROLL ");
 }
 
 void loop() {
@@ -78,8 +79,8 @@ void updateDisplay(int pitch, int roll) {
   output += pitchString;
 
   // write pitch value
-  mySerial.print(output);
-  mySerial.write(DEGREE);
+  Serial1.print(output);
+  Serial1.write(DEGREE);
 
   int outputLength = output.length() + 1;
 
@@ -94,30 +95,30 @@ void updateDisplay(int pitch, int roll) {
   output += rollString;
 
   // pad spaces before roll value
-  mySerial.print(output);
-  mySerial.write(DEGREE);
+  Serial1.print(output);
+  Serial1.write(DEGREE);
 
   outputLength += output.length() + 1;
 
   // fill the rest of the line with blanks
   for (int i=outputLength; i<16; i++) {
-    mySerial.print(" ");
+    Serial1.print(" ");
   }
 }
 
 void clearDisplay() {
   moveToFirstLine();
-  mySerial.write("                ");
-  mySerial.write("                ");
+  Serial1.write("                ");
+  Serial1.write("                ");
   moveToFirstLine();
 }
 
 void moveToFirstLine() {
-  mySerial.write(254);
-  mySerial.write(128);
+  Serial1.write(254);
+  Serial1.write(128);
 }
 
 void moveToSecondLine() {
-  mySerial.write(254);
-  mySerial.write(192);
+  Serial1.write(254);
+  Serial1.write(192);
 }

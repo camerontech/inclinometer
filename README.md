@@ -22,16 +22,6 @@ However, since we're only measuring acceleration we will get false readings when
 the sensor itself is in motion (like when you're driving in a car). To get a
 "true" reading of your pitch and roll you'll need to stop moving.
 
-The sensor's idea of 0° on the X and Y axes is set from the factory and your
-initial readings may be a bit off from that if the sensor is not mounted
-perfectly level (according to the sensor) in both axes. To compensate for this a
-primitive "tare" has been added (press the button for a second) that takes the
-current values and tells the system to treat them as 0° instead of the factory
-defaults. This isn't ideal and effort should be taken to mount the sensor as
-close to 0° as possible. If mounted in your car, stop the vehicle on what feels
-like the flattest orientation possible and then tweak the sensor mount until you
-read 0° for both measurements.
-
 Equipment
 ---------
 * 1 x Arduino or compatible board https://www.sparkfun.com/products/11021
@@ -40,11 +30,6 @@ Equipment
 
 Wiring
 ------
-Connect the LCD to 5V, GND and digital pin 2. (The current sketch uses the
-SoftwareSerial library to write to the LCD so that we don't have to
-connect/disconnect the screen from pins 0 and 1 when pushing new code, and also
-so we can use the Arduino serial monitor for debugging.)
-
 Connect the accelerometer to 3.3V, GND, X to analog pin 0 and Y to analog pin 1
 and Z to analog pin 2.
 
@@ -53,6 +38,10 @@ pull-down resistor to ground and to digital pin 7.
 
 Connect the 3.3V output to AREF. This sets the maximum voltage to be expected
 when doing an analogRead. In our case that makes 3.3V = 1024.
+
+Connect the LCD to 5V, GND. Connect RX to pin 1 on the Arduino _after_ uploading your sketch. The LCD uses the same pin as the USB connector when uploading code
+so to avoid scrambling your LCD don't connect it until after your sketch is
+uploaded.
 
 ![layout](http://cannikin.github.com/arduino_inclinometer/inclinometer-layout.png?5)
 
