@@ -6,36 +6,19 @@
 SoftwareSerial mySerial(3,2);
 
 // analog input pins
-const int X_IN = 0;
-const int Y_IN = 1;
-const int Z_IN = 2;
-const int TARE_IN = 7;
+const int X_PIN = 0;
+const int Y_PIN = 1;
+const int Z_PIN = 2;
 
 // max/min analog values
 const int MIN = 405;
 const int MAX = 615;
 
-int xmax = 000;
-int xmin = 999;
-int ymax = 000;
-int ymin = 999;
-int zmax = 000;
-int zmin = 999;
-
 // ASCII character for degree symbol
 const int DEGREE = 223;
 
-// tare values that we want to save between loops
-int xTare = 0;
-int yTare = 0;
-int zTare = 0;
-
 void setup() {
-  // Setup tare pin as an input
-  pinMode(TARE_IN, INPUT);
-  // Enable internal pull-up resistor
-  digitalWrite(TARE_IN, HIGH);
-
+  // startup the serial ports
   Serial.begin(9600);
   mySerial.begin(9600);
   analogReference(EXTERNAL);
@@ -43,6 +26,7 @@ void setup() {
   // wait for splash screen
   delay(500);
 
+  // clear out anything that's on the display already
   clearDisplay();
 
   // write header
@@ -50,27 +34,21 @@ void setup() {
 }
 
 void loop() {
-  moveToSecondLine();
-
-  // if the button is pressed, tare the current values
-  if (digitalRead(TARE_IN) == LOW) {
-    tare();
-  }
-
   // sample the voltages
-  int x = analogRead(X_IN) - xTare;
-  int y = analogRead(Y_IN) - yTare;
-  int z = analogRead(Z_IN) - zTare;
+  int x = analogRead(X_PIN);
+  int y = analogRead(Y_PIN);
+  int z = analogRead(Z_PIN);
 
   // convert to range of -90 to +90 degrees
   int xAng = map(x, MIN, MAX, -90, 90);
   int yAng = map(y, MIN, MAX, -90, 90);
   int zAng = map(z, MIN, MAX, -90, 90);
 
-  // do some math to convert radians to degrees
+  // convert radians to degrees
   int pitch = RAD_TO_DEG * (atan2(-xAng, -zAng) + PI);
   int roll = RAD_TO_DEG * (atan2(-yAng, -zAng) + PI);
 
+  // convert left roll and forward pitch to negative degrees
   if (pitch > 180) {
     pitch = pitch - 360;
   }
@@ -78,27 +56,53 @@ void loop() {
     roll = roll - 360;
   }
 
-  Serial.print("x:");
-  Serial.print(x, DEC);
-  Serial.print(" y:");
-  Serial.print(y, DEC);
-  Serial.print(" z:");
-  Serial.println(z, DEC);
-
+  // write the pitch and roll to the second line
   updateDisplay(pitch, roll);
 
   // Wait a quarter second so the numbers aren't flashing so fast
   delay(250);
 }
 
-void tare() {
-  int x = analogRead(X_IN);
-  int y = analogRead(Y_IN);
-  int z = analogRead(Z_IN);
+void updateDisplay(int pitch, int roll) {
+  moveToSecondLine();
 
-  xTare = x - (MAX - MIN) / 2 + MIN;
-  yTare = y - (MAX - MIN) / 2 + MIN;
-  zTare = z - (MAX - MIN) / 2 + MIN;
+  // convert int values to strings for output
+  String pitchString = String(pitch);
+  String rollString = String(roll);
+
+  // pad spaces before pitch value
+  String output = "   ";
+  if (pitchString.length() == 1) {
+    output += " ";
+  }
+  output += pitchString;
+
+  // write pitch value
+  mySerial.print(output);
+  mySerial.write(DEGREE);
+
+  int outputLength = output.length() + 1;
+
+  // pad spaces before pitch value
+  output = "";
+  for (int i=outputLength; i<10; i++) {
+    output += " ";
+  }
+  if (rollString.length() == 1) {
+    output += " ";
+  }
+  output += rollString;
+
+  // pad spaces before roll value
+  mySerial.print(output);
+  mySerial.write(DEGREE);
+
+  outputLength += output.length() + 1;
+
+  // fill the rest of the line with blanks
+  for (int i=outputLength; i<16; i++) {
+    mySerial.print(" ");
+  }
 }
 
 void clearDisplay() {
@@ -116,43 +120,4 @@ void moveToFirstLine() {
 void moveToSecondLine() {
   mySerial.write(254);
   mySerial.write(192);
-}
-
-void updateDisplay(int pitch, int roll) {
-  String pitchString = String(pitch);
-  String rollString = String(roll);
-
-  // Pad for X value
-  String output = "   ";
-  if (pitchString.length() == 1) {
-    output += " ";
-  }
-  output += pitchString;
-
-  // Write X value and degree sign
-  mySerial.print(output);
-  mySerial.write(DEGREE);
-
-  int outputLength = output.length() + 1;
-
-  // Pad for Y value
-  output = "";
-  for (int i=outputLength; i<10; i++) {
-    output += " ";
-  }
-  if (rollString.length() == 1) {
-    output += " ";
-  }
-  output += rollString;
-
-  // Write Y value and degree sign
-  mySerial.print(output);
-  mySerial.write(DEGREE);
-
-  outputLength += output.length() + 1;
-
-  // Fill the rest of the line with blanks
-  for (int i=outputLength; i<16; i++) {
-    mySerial.print(" ");
-  }
 }
