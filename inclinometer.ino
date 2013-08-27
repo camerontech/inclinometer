@@ -12,12 +12,8 @@ const int Z_IN = 2;
 const int TARE_IN = 7;
 
 // max/min analog values
-const int XMIN = 404;
-const int XMAX = 609;
-const int YMIN = 406;
-const int YMAX = 619;
-const int ZMIN = 407;
-const int ZMAX = 624;
+const int MIN = 405;
+const int MAX = 615;
 
 int xmax = 000;
 int xmin = 999;
@@ -33,7 +29,6 @@ const int DEGREE = 223;
 // tare values that we want to save between loops
 int xTare = 0;
 int yTare = 0;
-int zTare = 0;
 
 void setup() {
   // Setup tare pin as an input
@@ -67,12 +62,12 @@ void loop() {
   int y = analogRead(Y_IN);
   int z = analogRead(Z_IN);
 
-  figureMaxMin(x, y, z);
+
 
   // convert to range of -90 to +90 degrees
-  int xAng = map(x, XMIN, XMAX, -90, 90);
-  int yAng = map(y, YMIN, YMAX, -90, 90);
-  int zAng = map(z, ZMIN, ZMAX, -90, 90);
+  int xAng = map(x, MIN, MAX, -90, 90);
+  int yAng = map(y, MIN, MAX, -90, 90);
+  int zAng = map(z, MIN, MAX, -90, 90);
 
   // do some math to convert radians to degrees
   int pitch = RAD_TO_DEG * (atan2(-xAng, -zAng) + PI);
@@ -101,11 +96,9 @@ void loop() {
 void tare() {
   int x = analogRead(X_IN);
   int y = analogRead(Y_IN);
-  int z = analogRead(Z_IN);
 
-  xTare = x - (XMAX - XMIN) / 2 + XMIN;
-  yTare = y - (YMAX - YMIN) / 2 + YMIN;
-  zTare = z - (ZMAX - ZMIN) / 2 + ZMIN;
+  xTare = x - (MAX - MIN) / 2 + MIN;
+  yTare = y - (MAX - MIN) / 2 + MIN;
 }
 
 void clearDisplay() {
@@ -162,38 +155,4 @@ void updateDisplay(int pitch, int roll) {
   for (int i=outputLength; i<16; i++) {
     mySerial.print(" ");
   }
-}
-
-void figureMaxMin(int x, int y, int z) {
-  if (x < xmin) {
-    xmin = x;
-  }
-  if (x > xmax) {
-    xmax = x;
-  }
-  if (y < ymin) {
-    ymin = y;
-  }
-  if (y > ymax) {
-    ymax = y;
-  }
-  if (z < zmin) {
-    zmin = z;
-  }
-  if (z > zmax) {
-    zmax = z;
-  }
-
-  Serial.print("xmax:");
-  Serial.print(xmax, DEC);
-  Serial.print(" xmin:");
-  Serial.print(xmin, DEC);
-  Serial.print(" ymax:");
-  Serial.print(ymax, DEC);
-  Serial.print(" ymin:");
-  Serial.print(ymin, DEC);
-  Serial.print(" zmax:");
-  Serial.print(zmax, DEC);
-  Serial.print(" zmin:");
-  Serial.println(zmin, DEC);
 }
