@@ -22,13 +22,13 @@ int ymin = 999;
 int zmax = 000;
 int zmin = 999;
 
-
 // ASCII character for degree symbol
 const int DEGREE = 223;
 
 // tare values that we want to save between loops
 int xTare = 0;
 int yTare = 0;
+int zTare = 0;
 
 void setup() {
   // Setup tare pin as an input
@@ -58,11 +58,9 @@ void loop() {
   }
 
   // sample the voltages
-  int x = analogRead(X_IN);
-  int y = analogRead(Y_IN);
-  int z = analogRead(Z_IN);
-
-
+  int x = analogRead(X_IN) - xTare;
+  int y = analogRead(Y_IN) - yTare;
+  int z = analogRead(Z_IN) - zTare;
 
   // convert to range of -90 to +90 degrees
   int xAng = map(x, MIN, MAX, -90, 90);
@@ -96,9 +94,11 @@ void loop() {
 void tare() {
   int x = analogRead(X_IN);
   int y = analogRead(Y_IN);
+  int z = analogRead(Z_IN);
 
   xTare = x - (MAX - MIN) / 2 + MIN;
   yTare = y - (MAX - MIN) / 2 + MIN;
+  zTare = z - (MAX - MIN) / 2 + MIN;
 }
 
 void clearDisplay() {
