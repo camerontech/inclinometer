@@ -8,11 +8,11 @@ const int Y_IN = 1;
 const int TARE_IN = 7;
 
 // max/min analog values
-const int XMIN = 262;
-const int XMAX = 398;
+const int XMIN = 403;
+const int XMAX = 613;
 const int XMID = XMIN + (XMAX - XMIN) / 2;
-const int YMIN = 265;
-const int YMAX = 403;
+const int YMIN = 408;
+const int YMAX = 618;
 const int YMID = YMIN + (YMAX - YMIN) / 2;
 
 // ASCII character for degree symbol
@@ -22,6 +22,11 @@ const int DEGREE = 223;
 int xTare = 0;
 int yTare = 0;
 
+int xMax = 0;
+int xMin = 999;
+int yMax = 0;
+int yMin = 999;
+
 void setup() {
   // Setup tare pin as an input
   pinMode(TARE_IN, INPUT);
@@ -30,6 +35,7 @@ void setup() {
 
   Serial.begin(9600);
   mySerial.begin(9600);
+  analogReference(EXTERNAL);
 
   // wait for splash screen
   delay(500);
@@ -51,10 +57,32 @@ void loop() {
   int x = analogRead(X_IN);
   int y = analogRead(Y_IN);
 
+  if (x > xMax) {
+    xMax = x;
+  }
+  if (x < xMin) {
+    xMin = x;
+  }
+  if (y > yMax) {
+    yMax = y;
+  }
+  if (y < yMin) {
+    yMin = y;
+  }
+
   Serial.print("x:");
   Serial.print(x, DEC);
   Serial.print(" y:");
   Serial.println(y, DEC);
+
+  Serial.print("xmax:");
+  Serial.print(xMax, DEC);
+  Serial.print(" xmin:");
+  Serial.print(xMin, DEC);
+  Serial.print(" ymax:");
+  Serial.print(yMax, DEC);
+  Serial.print(" ymin:");
+  Serial.println(yMin, DEC);
 
   int xCalibrated = map(x-xTare, XMIN, XMAX, -90, 90);
   int yCalibrated = map(y-yTare, YMIN, YMAX, -90, 90);
