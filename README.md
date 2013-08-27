@@ -45,10 +45,14 @@ SoftwareSerial library to write to the LCD so that we don't have to
 connect/disconnect the screen from pins 0 and 1 when pushing new code, and also
 so we can use the Arduino serial monitor for debugging.)
 
-Connect the accelerometer to 3.3V, GND, X to analog pin 0 and Y to analog pin 1.
+Connect the accelerometer to 3.3V, GND, X to analog pin 0 and Y to analog pin 1
+and Z to analog pin 2.
 
 Connect 5V to one leg of the push button. Connect the other leg to a 10K
 pull-down resistor to ground and to digital pin 7.
+
+Connect the 3.3V output to AREF. This sets the maximum voltage to be expected
+when doing an analogRead. In our case that makes 3.3V = 1024.
 
 ![layout](http://cannikin.github.com/arduino_inclinometer/inclinometer-layout.png?4)
 
