@@ -43,7 +43,7 @@ Connect the LCD to 5V, GND. Connect RX to pin 1 on the Arduino _after_ uploading
 so to avoid scrambling your LCD don't connect it until after your sketch is
 uploaded.
 
-![layout](http://cannikin.github.com/arduino_inclinometer/inclinometer-layout.png?5)
+![layout](http://cannikin.github.com/arduino_inclinometer/inclinometer-layout.png?6)
 
 The LCD screen in the diagram is a parallel one, but I'm wiring it as if it
 was a Sparkfun SerLCD: 5V, GND and RX are the only pins needed.
