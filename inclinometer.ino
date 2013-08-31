@@ -1,9 +1,11 @@
 // Thanks to http://bildr.org/2011/04/sensing-orientation-with-the-adxl335-arduino
 // for finding the correct formula for converting the ADXL335 voltage to angles.
 
-//#include <SoftwareSerial.h>
+#include <SoftwareSerial.h>
 
-//SoftwareSerial Serial1(3,2);
+SoftwareSerial Serial1(3,2);
+
+const bool DEBUG = true;
 
 // analog input pins
 const int X_PIN = 0;
@@ -19,7 +21,10 @@ const int DEGREE = 223;
 
 void setup() {
   // set analogRead max to 3.3v instead of default 5v
-  analogReference(EXTERNAL);
+  // analogReference(EXTERNAL);
+
+  if (DEBUG)
+    Serial.begin(9600);
 
   // startup the serial ports
   Serial1.begin(9600);
@@ -103,6 +108,14 @@ void updateDisplay(int pitch, int roll) {
   // fill the rest of the line with blanks
   for (int i=outputLength; i<16; i++) {
     Serial1.print(" ");
+  }
+
+  if (DEBUG){
+    Serial.print("pitch: ");
+    Serial.print(pitchString);
+    Serial.print(" roll: ");
+    Serial.print(rollString);
+    Serial.println("");
   }
 }
 
