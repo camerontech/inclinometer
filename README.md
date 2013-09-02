@@ -47,3 +47,14 @@ uploaded.
 
 The LCD screen in the diagram is a parallel one, but I'm wiring it as if it
 was a Sparkfun SerLCD: 5V, GND and RX are the only pins needed.
+
+Bonus
+-----
+If you plan to use this in your vehicle you may need some help getting the
+correct voltages to your Arduino and accelerometer. In my truck I was able to
+tap into the wires for the overhead lights that measured about 12.8v. The
+Arduino I'm using expects to receive 5v and doesn't have a dedicated 3.3v
+output. So I wired up a regulator package that takes 12v and outputs both 5v and
+3.3v.
+
+![layout](http://cannikin.github.com/arduino_inclinometer/voltage_regulator-layout.png)
