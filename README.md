@@ -57,4 +57,4 @@ Arduino I'm using expects to receive 5v and doesn't have a dedicated 3.3v
 output. So I wired up a regulator package that takes 12v and outputs both 5v and
 3.3v.
 
-![layout](http://cannikin.github.com/arduino_inclinometer/voltage_regulator-layout.png)
+![layout](http://cannikin.github.com/arduino_inclinometer/voltage_regulator-layout.png?1)
