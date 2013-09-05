@@ -153,12 +153,12 @@ void loop() {
   int zAng = map(z, MIN, MAX, -90, 90);
 
   // convert radians to degrees
-  int pitch = RAD_TO_DEG * (atan2(-xAng, -zAng) + PI);
-  int roll = RAD_TO_DEG * (atan2(-yAng, -zAng) + PI);
+  int pitch = -(RAD_TO_DEG * (atan2(-yAng, -zAng) + PI));
+  int roll = RAD_TO_DEG * (atan2(-xAng, -zAng) + PI);
 
   // convert left roll and forward pitch to negative degrees
-  if (pitch > 180) {
-    pitch = pitch - 360;
+  if (pitch < -180) {
+    pitch = pitch + 360;
   }
   if (roll > 180) {
     roll = roll - 360;
@@ -173,23 +173,23 @@ void loop() {
 }
 
 
-void updateDisplay(int pitch, int roll) {
+void updateDisplay(int first, int second) {
   // Move to the start of the second line
   lcd.setCursor(0,1);
 
   // convert int values to strings for output
-  String pitchString = String(pitch);
-  String rollString = String(roll);
+  String firstString = String(first);
+  String secondString = String(second);
 
   // pad spaces before pitch value
   String output = "  ";
-  if (pitchString.length() < 4) {
+  if (firstString.length() < 4) {
     output += " ";
   }
-  if (pitchString.length() == 1) {
+  if (firstString.length() == 1) {
     output += " ";
   }
-  output += pitchString;
+  output += firstString;
 
   // write pitch value
   lcd.print(output);
@@ -202,13 +202,13 @@ void updateDisplay(int pitch, int roll) {
   for (int i=outputLength; i<10; i++) {
     output += " ";
   }
-  if (pitchString.length() < 3) {
+  if (firstString.length() < 3) {
     output += " ";
   }
-  if (rollString.length() == 1) {
+  if (secondString.length() == 1) {
     output += " ";
   }
-  output += rollString;
+  output += secondString;
 
   // pad spaces before roll value
   lcd.print(output);
