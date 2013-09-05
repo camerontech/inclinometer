@@ -46,7 +46,7 @@
 
 // Set to true to output debugging info to both the first line of the LCD
 // and the serial monitor
-const bool DEBUG = true;
+const bool DEBUG = false;
 
 // analog input pins
 const int X_PIN = 0;
