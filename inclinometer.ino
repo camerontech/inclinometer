@@ -52,8 +52,8 @@ const int Y_PIN = 1;
 const int Z_PIN = 2;
 
 // max/min analog values
-const int MIN = 405;
-const int MAX = 615;
+const int MIN = 401;
+const int MAX = 630;
 
 // ASCII character for degree symbol
 const int DEGREE = 223;
