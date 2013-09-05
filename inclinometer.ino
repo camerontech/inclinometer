@@ -107,6 +107,9 @@ void setup(){
   pinMode(BLPin, OUTPUT);
   analogWrite(BLPin, 255);
 
+  pinMode(13, OUTPUT);
+  digitalWrite(13, LOW);
+
   // Splashscreen
   lcd.print(" CameronTech.io ");
   lcd.setCursor(0, 1);
