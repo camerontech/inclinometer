@@ -44,6 +44,8 @@
 #include <LiquidCrystal.h>
 #include <EEPROM.h>
 
+// Set to true to output debugging info to both the first line of the LCD
+// and the serial monitor
 const bool DEBUG = true;
 
 // analog input pins
@@ -93,22 +95,10 @@ uint8_t characters; // rows * columns
 // initialize the LCD at pins defined above
 LiquidCrystal lcd(RSPin, RWPin, ENPin, D4Pin, D5Pin, D6Pin, D7Pin);
 
-/* ----------------------------------------------------------
-  In the setup() function, we'll read the previous baud,
-  screen size, backlight brightness, and splash screen state
-  from EEPROM. Serial will be started at the proper baud, the
-  LCD will be initialized, backlight turned on, and splash
-  screen displayed (or not) according to the EEPROM states.
-  ----------------------------------------------------------*/
 void setup(){
   //////////////////////
   // LCD setup
   //////////////////////
-
-  // initialize the serial communications:
-  if (DEBUG) {
-    Serial.begin(9600);
-  }
 
   // set up the LCD's number of rows and columns:
   lcd.begin(16, 2);
@@ -141,6 +131,18 @@ void loop() {
   int x = analogRead(X_PIN);
   int y = analogRead(Y_PIN);
   int z = analogRead(Z_PIN);
+
+  if (DEBUG) {
+    lcd.setCursor(0,0);
+    lcd.print("                ");
+    lcd.setCursor(0,0);
+    lcd.print(" x");
+    lcd.print(x);
+    lcd.print(" y");
+    lcd.print(y);
+    lcd.print(" z");
+    lcd.print(z);
+  }
 
   // convert to range of -90 to +90 degrees
   int xAng = map(x, MIN, MAX, -90, 90);
@@ -216,11 +218,4 @@ void updateDisplay(int pitch, int roll) {
     lcd.print(" ");
   }
 
-  if (DEBUG){
-    Serial.print("pitch: ");
-    Serial.print(pitchString);
-    Serial.print(" roll: ");
-    Serial.print(rollString);
-    Serial.println("");
-  }
 }
