@@ -122,7 +122,7 @@ void setup(){
   //////////////////////
 
   // set analogRead max to 3.3v instead of default 5v
-  // analogReference(EXTERNAL);
+  analogReference(EXTERNAL);
 
   // write header
   lcd.print("  PITCH   ROLL  ");
